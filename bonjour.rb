@@ -11,6 +11,7 @@ bp_require File.join(*%w[net-mdns lib net dns mdns-sd])
 # bp_require File.join(*%w[net-mdns lib net dns resolv-mdns])
 # bp_require File.join(*%w[net-mdns lib net dns resolv-replace])
 
+Thread.abort_on_exception = true
 DNSSD = Net::DNS::MDNSSD
 
 class Bonjour
@@ -21,7 +22,15 @@ class Bonjour
     Thread.new(bp, args) do |bp, args|
       service = DNSSD.browse(args['service']) do |b|
         DNSSD.resolve(b.name, b.type) do |r|
-          args['callback'].invoke(r.name, r.target, r.port)
+          log(r.target)
+          log(r.port)
+          # next if same host
+          next if r.target == Socket.gethostname
+          args['callback'].invoke(
+            b.name, 
+            r.target, 
+            r.port
+          )
         end
       end
       sleep(args['timeout'] || 3)
@@ -34,6 +43,11 @@ class Bonjour
     DNSSD.register(args['name'], args['service'], 'local', args['port'])
     bp.complete(true)
   end
+  
+  private
+    def log(d)
+      bp_log("info", d.inspect)
+    end
 end
 
 # http://browserplus.yahoo.com/developer/services/ruby/
@@ -42,7 +56,7 @@ rubyCoreletDefinition = {
   'name' => "Bonjour",
   'major_version' => 1,
   'minor_version' => 0,
-  'micro_version' => 0,
+  'micro_version' => 3,
   'documentation' => 'A todo service that tests callbacks from ruby.',
   'functions' =>
   [
