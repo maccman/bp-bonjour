@@ -42,57 +42,57 @@ rubyCoreletDefinition = {
   'name' => "Bonjour",
   'major_version' => 1,
   'minor_version' => 0,
-  'micro_version' => 5,
-  'documentation' => 'A todo service that tests callbacks from ruby.',
+  'micro_version' => 6,
+  'documentation' => 'A Bonjour service.',
   'functions' =>
   [
     {
       'name' => 'browse',
-      'documentation' => "Sayt todo \"hello\" to the world",
+      'documentation' => "Browse for Bonjour services",
       'arguments' =>
       [
         {
           'name' => 'service',
           'type' => 'string',
           'required' => true,
-          'documentation' => 'the callback to send a hello message to'
+          'documentation' => 'Type of service, e.g. _example._tcp'
         },
         {
           'name' => 'callback',
           'type' => 'callback',
           'required' => true,
-          'documentation' => 'the callback to send a hello message to'
+          'documentation' => 'Callback invoked with services are found'
         },
         {
           'name' => 'timeout',
           'type' => 'integer',
           'required' => false,
-          'documentation' => 'the callback to send a hello message to'
+          'documentation' => 'Timeout'
         }
       ]
     },
     {
       'name' => 'register',
-      'documentation' => "todo",
+      'documentation' => "Register a Bonjour service",
       'arguments' => 
       [
         {
           'name' => 'name',
           'type' => 'string',
           'required' => true,
-          'documentation' => 'todo'
+          'documentation' => 'Name of service'
         },
         {
           'name' => 'service',
           'type' => 'string',
           'required' => true,
-          'documentation' => 'todo'
+          'documentation' => 'Type of service, e.g. _example._tcp'
         },
         {
           'name' => 'port',
           'type' => 'integer',
           'required' => true,
-          'documentation' => 'todo'
+          'documentation' => 'Port of service'
         }
       ]
     }
