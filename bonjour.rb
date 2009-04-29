@@ -1,16 +1,4 @@
-# $: << File.join(File.dirname(__FILE__), *%w[net-mdns lib])
-# 
-# # For MDNSSD
-# require 'net/dns/mdns-sd'
-# # To make Resolv aware of mDNS
-# require 'net/dns/resolv-mdns'
-# # To make TCPSocket use Resolv, not the C library resolver.
-# require 'net/dns/resolv-replace'
-
 bp_require File.join(*%w[net-mdns lib net dns mdns-sd])
-# bp_require File.join(*%w[net-mdns lib net dns resolv-mdns])
-# bp_require File.join(*%w[net-mdns lib net dns resolv-replace])
-
 Thread.abort_on_exception = true
 DNSSD = Net::DNS::MDNSSD
 
@@ -19,24 +7,22 @@ class Bonjour
   end
   
   def browse(bp, args)
-    Thread.new(bp, args) do |bp, args|
-      service = DNSSD.browse(args['service']) do |b|
-        DNSSD.resolve(b.name, b.type) do |r|
-          log(r.target)
-          log(r.port)
-          # next if same host
-          next if r.target == Socket.gethostname
-          args['callback'].invoke(
-            b.name, 
-            r.target, 
-            r.port
-          )
-        end
+    service = DNSSD.browse(args['service']) do |b|
+      DNSSD.resolve(b.name, b.type) do |r|
+        log(r.target)
+        log(r.port)
+        # next if same host
+        next if r.target == Socket.gethostname
+        args['callback'].invoke(
+          b.name, 
+          r.target, 
+          r.port
+        )
       end
-      sleep(args['timeout'] || 3)
-      service.stop
-      bp.complete(true)
     end
+    sleep(args['timeout'] || 3)
+    service.stop
+    bp.complete(true)
   end
   
   def register(bp, args)
@@ -56,7 +42,7 @@ rubyCoreletDefinition = {
   'name' => "Bonjour",
   'major_version' => 1,
   'minor_version' => 0,
-  'micro_version' => 3,
+  'micro_version' => 5,
   'documentation' => 'A todo service that tests callbacks from ruby.',
   'functions' =>
   [
